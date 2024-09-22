@@ -1,9 +1,10 @@
 from fastapi import FastAPI
-app = FastAPI()
 
-@app.get(
-    '/{name}',
-)
-def greetings(name: str) -> dict[str, str]:
+# Импортируем главный роутер.
+from app.api.routers import main_router
+from app.core.config import settings
 
-    return {'Hello': name}
+app = FastAPI(title=settings.app_title)
+
+# Подключаем главный роутер.
+app.include_router(main_router)
