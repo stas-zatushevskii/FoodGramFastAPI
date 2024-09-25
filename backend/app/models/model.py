@@ -3,7 +3,7 @@ import os
 from sqlalchemy import Column, String, Text, DateTime, Integer, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
-from backend.app.core.db import Base
+from app.core.db import Base
 
 
 RecipesIngredients = Table(
@@ -12,21 +12,21 @@ RecipesIngredients = Table(
     Column('ingredient_id',Integer, ForeignKey('ingredient.id'), nullable=False, primary_key=True),
     Column('recipe_id', Integer, ForeignKey('recipe.id'), nullable=False, primary_key=True),
     Column('amount', Integer, nullable=False),
-    Column('measure', String(20), nullable=False),
 )
 
 RecipesTags = Table(
-    'recipe_ingredients',
+    'recipe_tags',
     Base.metadata,
     Column('recipe_id', Integer, ForeignKey('recipe.id'), nullable=False, primary_key=True),
     Column('tag_id', Integer, ForeignKey('tag.id'), nullable=False, primary_key=True)
 )
 
 class Ingredient(Base):
-    name = Column(String(100), unique=True, nullable=False)
-    # устонавливаю двух сторонюю связь между моделями связанными ManyToMany
+    name = Column(String(100), nullable=False)
+    # устанавливаю двух сторонюю связь между моделями связанными ManyToMany
     # back_populates указывает какое поле с одной стороны связи соответствует полю с другой стороны
     recipes = relationship('Recipe', secondary=RecipesIngredients, back_populates='ingredients')
+    measurement_unit = Column(String(20), nullable=False)
 
 
 class Tag(Base):
@@ -37,6 +37,9 @@ class Tag(Base):
 
 
 class Recipe(Base):
+    # Добавляем поле - внешний ключ пользователя.
+    # User OneToMany -> Recipe
+    author = Column(Integer, ForeignKey('user.id'))
     name = Column(String(100), unique=True, nullable=False)
     image = Column(String(100), unique=True)
     description = Column(Text, nullable=False)

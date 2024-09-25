@@ -2,7 +2,8 @@ from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 
 from app.core.db import Base   #noqa
 
-from sqlalchemy import Column, DateTime, String, Text, Boolean
+from sqlalchemy import Column, String, Boolean
+from sqlalchemy.orm import relationship
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
@@ -13,3 +14,6 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_verified: bool = Column(Boolean, default=False, nullable=False)
     first_name: str = Column(String, nullable=False)
     last_name: str = Column(String, nullable=False)
+    # Установите связь между моделями через функцию relationship.
+    # User OneToMany -> Recipe
+    recipe = relationship('Recipe', cascade='delete')
