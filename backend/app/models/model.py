@@ -3,7 +3,7 @@ import os
 from sqlalchemy import Column, String, Text, DateTime, Integer, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
-from app.core.db import Base
+from app.core.db import Base  # noqa
 
 
 RecipesIngredients = Table(
@@ -52,3 +52,17 @@ class Recipe(Base):
         # Вернуть URL изображения для отображения, если изображения хранятся в публичной директории
         return os.path.join('/static/uploads/', self.image_path)
 
+
+class ShoppingList(Base):
+    user = Column(Integer, ForeignKey('user.id'), nullable=False)
+    recipe = relationship('Recipe')
+
+
+class Favorite(Base):
+    user = Column(Integer, ForeignKey('user.id'), nullable=False)
+    recipe = relationship('Recipe')
+
+
+class Subscription(Base):
+    author = Column(Integer, ForeignKey('user.id'), nullable=False)
+    follower = Column(Integer, ForeignKey('user.id'), nullable=False)

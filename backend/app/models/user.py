@@ -1,6 +1,6 @@
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 
-from app.core.db import Base   #noqa
+from app.core.db import Base # noqa
 
 from sqlalchemy import Column, String, Boolean
 from sqlalchemy.orm import relationship
@@ -17,3 +17,6 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     # Установите связь между моделями через функцию relationship.
     # User OneToMany -> Recipe
     recipe = relationship('Recipe', cascade='delete')
+    # Установите связь между моделями через функцию relationship.
+    # User ManyToMany -> Subscription
+    subscription = relationship('Subscription', cascade='delete')
