@@ -7,15 +7,15 @@ from .user import UserGet
 
 
 class RecipeBase(BaseModel):
-    image: FilePath
+    image: str
     name: str
-    text: str
+    description: str
     cooking_time: datetime
 
 
 class RecipeCreate(RecipeBase):
-    ingredients: list[Ingredient]
-    tags: list[int]
+    ingredients: Optional[list[Ingredient]]
+    tags: Optional[list[int]]
 
 
 class RecipeUpdate(RecipeBase):
@@ -39,6 +39,12 @@ class RecipeGet(RecipeBase):
     is_favorite: bool
     is_in_shopping_cart: bool
     author: UserGet
+
+    class Config:
+        orm_mode = True
+
+class RecipeDB(RecipeBase):
+    id: int
 
     class Config:
         orm_mode = True

@@ -27,6 +27,7 @@ class CRUDBase:
         obj_in_data = obj_in.dict()
         if user is not None:
             obj_in_data['user_id'] = user.id
+        print(obj_in_data)
         db_obj = self.model(**obj_in_data)
         session.add(db_obj)
         await session.commit()

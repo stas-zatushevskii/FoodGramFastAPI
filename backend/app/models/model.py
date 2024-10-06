@@ -1,7 +1,11 @@
+
 import os
+from datetime import datetime
+from typing import Optional
 
 from sqlalchemy import Column, String, Text, DateTime, Integer, ForeignKey, Table
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from typing import Annotated
 
 from app.core.db import Base  # noqa
 
@@ -30,22 +34,22 @@ class Ingredient(Base):
 
 
 class Tag(Base):
-    name = Column(String(100), unique=True, nullable=False)
-    color = Column(String(7), unique=True, nullable=False)
-    slug = Column(String(100), default="#ffffff",  unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(unique=True, nullable=False)
+    color: Mapped[str] = mapped_column(unique=True, nullable=False)
+    slug: Mapped[str] = mapped_column(default="#ffffff",  unique=True, nullable=False)
     recipes = relationship('Recipe', secondary=RecipesTags, back_populates='tag')
 
 
 class Recipe(Base):
     # Добавляем поле - внешний ключ пользователя.
     # User OneToMany -> Recipe
-    author = Column(Integer, ForeignKey('user.id'))
-    name = Column(String(100), unique=True, nullable=False)
-    image = Column(String(100), unique=True)
-    description = Column(Text, nullable=False)
+    author: Mapped[int] = mapped_column(ForeignKey('user.id'))
+    name: Mapped[str] = mapped_column(unique=True, nullable=False)
+    image: Mapped[str] = mapped_column(unique=True)
+    description: Mapped[str] = mapped_column(nullable=False)
     ingredients = relationship('Ingredient', secondary=RecipesIngredients, back_populates='recipes')
     tag = relationship('Tag', secondary=RecipesTags, back_populates='recipes')
-    cooking_time = Column(DateTime, nullable=False)
+    cooking_time: Mapped[datetime] = mapped_column(nullable=False)
 
 
     def get_image_url(self):
@@ -54,15 +58,10 @@ class Recipe(Base):
 
 
 class ShoppingList(Base):
-    user = Column(Integer, ForeignKey('user.id'), nullable=False)
-    recipe = relationship('Recipe')
+    user: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
+    recipe: Mapped[int] = mapped_column(ForeignKey('recipe.id'), nullable=False)
 
 
 class Favorite(Base):
-    user = Column(Integer, ForeignKey('user.id'), nullable=False)
-    recipe = relationship('Recipe')
-
-
-class Subscription(Base):
-    author = Column(Integer, ForeignKey('user.id'), nullable=False)
-    follower = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
+    recipe: Mapped[int] = mapped_column(ForeignKey('recipe.id'), nullable=False)
