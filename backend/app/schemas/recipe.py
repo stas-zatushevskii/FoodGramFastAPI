@@ -4,10 +4,11 @@ from pydantic import BaseModel, Field, FilePath
 from datetime import datetime
 from .ingredient import Ingredient
 from .user import UserGet
+from fastapi import UploadFile
 
 
 class RecipeBase(BaseModel):
-    image: str
+    image: Optional[UploadFile]
     name: str
     description: str
     cooking_time: datetime

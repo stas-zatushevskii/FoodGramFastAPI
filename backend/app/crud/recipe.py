@@ -12,5 +12,3 @@ async def create_recipe(
 ) -> Recipe:
     new_recipe_data = new_recipe.dict()
     db_recipe = Recipe(**new_recipe_data)
-
-    async with AsyncSessionLocal() as session:
