@@ -36,7 +36,7 @@ def get_jwt_strategy() -> JWTStrategy:
 
 # Создаём объект бэкенда аутентификации с выбранными параметрами.
 auth_backend = AuthenticationBackend(
-    name='jwt',  # Произвольное имя бэкенда (должно быть уникальным).
+    name='auth_token',  # Произвольное имя бэкенда (должно быть уникальным).
     transport=bearer_transport,
     get_strategy=get_jwt_strategy,
 )
@@ -73,6 +73,8 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
 # Корутина, возвращающая объект класса UserManager.
 async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db)
+
+
 
 
 fastapi_users = FastAPIUsers[User, int](

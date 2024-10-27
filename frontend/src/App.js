@@ -74,8 +74,8 @@ function App() {
     api.signin({
       email, password
     }).then(res => {
-      if (res.auth_token) {
-        localStorage.setItem('token', res.auth_token)
+      if (res.access_token) {
+        localStorage.setItem('token', res.access_token)
         api.getUserData()
           .then(res => {
             setUser(res)

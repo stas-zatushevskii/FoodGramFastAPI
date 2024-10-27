@@ -37,7 +37,7 @@ class Tag(Base):
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
     color: Mapped[str] = mapped_column(unique=True, nullable=False)
     slug: Mapped[str] = mapped_column(default="#ffffff",  unique=True, nullable=False)
-    recipes = relationship('Recipe', secondary=RecipesTags, back_populates='tag')
+    recipes = relationship('Recipe', secondary=RecipesTags, back_populates='tags')
 
 
 class Recipe(Base):
@@ -45,10 +45,10 @@ class Recipe(Base):
     # User OneToMany -> Recipe
     author: Mapped[int] = mapped_column(ForeignKey('user.id'))
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
-    image: Mapped[str] = mapped_column(unique=True)
+    image: Mapped[str] = mapped_column()
     description: Mapped[str] = mapped_column(nullable=False)
     ingredients = relationship('Ingredient', secondary=RecipesIngredients, back_populates='recipes')
-    tag = relationship('Tag', secondary=RecipesTags, back_populates='recipes')
+    tags = relationship('Tag', secondary=RecipesTags, back_populates='recipes')
     cooking_time: Mapped[datetime] = mapped_column(nullable=False)
 
 

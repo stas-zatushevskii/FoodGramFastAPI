@@ -25,6 +25,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_verified: bool = Column(Boolean, default=False, nullable=False)
     first_name: str = Column(String, nullable=False)
     last_name: str = Column(String, nullable=False)
+    username: str = Column(String, nullable=False)
     # Установите связь между моделями через функцию relationship.
     # User OneToMany -> Recipe
     recipe = relationship('Recipe', cascade='delete')

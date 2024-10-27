@@ -31,15 +31,19 @@ class Api {
     })
   }
 
-  signin ({ email, password }) {
+  signin ({email, password }) {
     return fetch(
-      '/api/auth/token/login/',
+      '/api/auth/jwt/login',
       {
         method: 'POST',
-        headers: this._headers,
-        body: JSON.stringify({
-          email, password
-        })
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded'  // Устанавливаем тип контента
+        },
+        body: new URLSearchParams({  // Преобразуем тело запроса в формат x-www-form-urlencoded
+          username: email,
+          password: password
+        }).toString()
       }
     ).then(this.checkResponse)
   }
@@ -47,7 +51,7 @@ class Api {
   signout () {
     const token = localStorage.getItem('token')
     return fetch(
-      '/api/auth/token/logout/',
+      '/api/auth/jwt/logout',
       {
         method: 'POST',
         headers: {
@@ -60,7 +64,7 @@ class Api {
 
   signup ({ email, password, username, first_name, last_name }) {
     return fetch(
-      `/api/users/`,
+      `/api/users/register`,
       {
         method: 'POST',
         headers: this._headers,
@@ -74,12 +78,12 @@ class Api {
   getUserData () {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/users/me/`,
+      `/api/users/me`,
       {
         method: 'GET',
         headers: {
           ...this._headers,
-          'authorization': `Token ${token}`
+          'authorization': `Bearer ${token}`
         }
       }
     ).then(this.checkResponse)
@@ -88,7 +92,7 @@ class Api {
   changePassword ({ current_password, new_password }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/users/set_password/`,
+      `/api/users/set_password`,
       {
         method: 'POST',
         headers: {

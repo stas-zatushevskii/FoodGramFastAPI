@@ -24,3 +24,6 @@ class UserGet(BaseModel):
     id: int
     email: EmailStr
     is_subscribed: bool
+
+class AuthTokenResponse(BaseModel):
+    auth_token: str

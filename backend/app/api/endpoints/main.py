@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 
+
 async def load_data(file_path: str, session: AsyncSession = Depends(get_async_session)):
     try:
         # Чтение JSON файла из указанного пути
@@ -30,5 +31,5 @@ async def load_data(file_path: str, session: AsyncSession = Depends(get_async_se
 
 @router.post("/load-from-file")
 async def load_from_file(db: AsyncSession = Depends(get_async_session)):
-    file_path = "../data/ingredients.json"
+    file_path = "data/ingredients.json"
     return await load_data(file_path, db)

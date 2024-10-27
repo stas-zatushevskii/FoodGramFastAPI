@@ -2,6 +2,7 @@ from app.core.db import AsyncSession
 from app.models import User
 from typing import Optional
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 
 '''
@@ -26,8 +27,7 @@ class CRUDBase:
     ):
         obj_in_data = obj_in.dict()
         if user is not None:
-            obj_in_data['user_id'] = user.id
-        print(obj_in_data)
+            obj_in_data['author'] = user.id
         db_obj = self.model(**obj_in_data)
         session.add(db_obj)
         await session.commit()
@@ -48,7 +48,7 @@ class CRUDBase:
 
     async def get_multi(
             self,
-            session: AsyncSession
+            session: AsyncSession,
     ):
         db_objs = await session.execute(select(self.model))
         return db_objs.scalars().all()
