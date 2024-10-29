@@ -14,4 +14,6 @@ class CRUDIngredient(CRUDBase):
             select(self.model).where(Ingredient.name.like(f'{ingredient_name}%'))
         )
         return ingredient.scalars().all()
+    
+
 ingredient_crud = CRUDIngredient(Ingredient)

@@ -2,11 +2,10 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class Tag(BaseModel):
+class FavoriteBase(BaseModel):
     id: Optional[int]
-    name: str
-    color: str
-    slug: str
+    recipe: int
+    user: int
 
     class Config:
         orm_mode = True

@@ -13,8 +13,8 @@ router = APIRouter()
 
 
 @router.get('/ingredients/',
-             response_model=list[Ingredient],
-             response_model_exclude_none=True)
+            response_model=list[Ingredient],
+            response_model_exclude_none=True)
 async def get_ingredients(
         session: AsyncSession = Depends(get_async_session),
         name: Optional[str] = Query(None)):
@@ -26,8 +26,8 @@ async def get_ingredients(
 
 
 @router.get('/ingredients/{id}/',
-             response_model=Ingredient,
-             response_model_exclude_none=True)
+            response_model=Ingredient,
+            response_model_exclude_none=True)
 async def get_ingredient(
         id: int,
         session: AsyncSession = Depends(get_async_session),

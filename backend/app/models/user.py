@@ -16,6 +16,7 @@ followers = Table(
     Column('follower_id', Integer, ForeignKey('user.id'), primary_key=True)
 )
 
+
 class User(SQLAlchemyBaseUserTable[int], Base):
     id = mapped_column(Integer, primary_key=True)
     email: str = Column(String(length=320), unique=True, index=True, nullable=False)
@@ -28,7 +29,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     username: str = Column(String, nullable=False)
     # Установите связь между моделями через функцию relationship.
     # User OneToMany -> Recipe
-    recipe = relationship('Recipe', cascade='delete')
+    recipes = relationship("Recipe", back_populates="author")
     # Установите связь между моделями через функцию relationship.
     # User ManyToMany -> Subscription
     # Пользователи, на которых подписан текущий пользователь

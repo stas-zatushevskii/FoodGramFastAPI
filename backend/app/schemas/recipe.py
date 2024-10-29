@@ -5,19 +5,19 @@ from datetime import datetime
 from .ingredient import Ingredient, IngredientInRecipe
 from .user import UserGet
 from fastapi import UploadFile
+from .tag import Tag
 
 
 class RecipeBase(BaseModel):
     image: Optional[str]
     name: str
-    description: str
-    cooking_time: datetime
+    text: str
+    cooking_time: int
 
 
 class RecipeCreate(RecipeBase):
     ingredients: Optional[list[IngredientInRecipe]]
     tags: Optional[list[int]]
-    author: int
 
 
 class RecipeUpdate(RecipeBase):
@@ -27,9 +27,9 @@ class RecipeUpdate(RecipeBase):
 
 class RecipeGet(RecipeBase):
     id: int
-    is_favorite: bool
-    is_in_shopping_cart: bool
-    author: UserGet
+    name: str
+    image: str
+    cooking_time: int
 
     class Config:
         orm_mode = True
@@ -37,10 +37,15 @@ class RecipeGet(RecipeBase):
 
 class RecipeDB(RecipeBase):
     id: int
-    author: int
-    is_favorite: Optional[bool] = False
+    tags: Optional[list[Tag]]
+    author: UserGet
+    ingredients: Optional[list[Ingredient]]
+    is_favorited: Optional[bool] = False
     is_in_shopping_cart: Optional[bool] = False
-    tags: Optional[list[int]]
+    name: Optional[str]
+    text: Optional[str]
+    cooking_time: Optional[str]
+    image: str
 
     class Config:
         orm_mode = True
@@ -51,7 +56,6 @@ class RecipeList(BaseModel):
     next: str
     pervious: str
     results: list[RecipeDB]
-    author: Optional[int]
 
     class Config:
         orm_mode = True

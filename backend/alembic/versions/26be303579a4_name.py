@@ -1,8 +1,8 @@
 """Name
 
-Revision ID: 149d9fb6013f
+Revision ID: 26be303579a4
 Revises: 
-Create Date: 2024-10-07 21:11:30.517142
+Create Date: 2024-10-27 21:35:35.839485
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '149d9fb6013f'
+revision = '26be303579a4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -43,6 +43,7 @@ def upgrade():
     sa.Column('is_verified', sa.Boolean(), nullable=False),
     sa.Column('first_name', sa.String(), nullable=False),
     sa.Column('last_name', sa.String(), nullable=False),
+    sa.Column('username', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
@@ -54,15 +55,14 @@ def upgrade():
     sa.PrimaryKeyConstraint('author_id', 'follower_id')
     )
     op.create_table('recipe',
-    sa.Column('author', sa.Integer(), nullable=False),
+    sa.Column('author_id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('image', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=False),
-    sa.Column('cooking_time', sa.DateTime(), nullable=False),
+    sa.Column('text', sa.String(), nullable=False),
+    sa.Column('cooking_time', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['author'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['author_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('image'),
     sa.UniqueConstraint('name')
     )
     op.create_table('favorite',

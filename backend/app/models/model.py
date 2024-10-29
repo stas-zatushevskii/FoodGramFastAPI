@@ -25,6 +25,7 @@ RecipesTags = Table(
     Column('tag_id', Integer, ForeignKey('tag.id'), nullable=False, primary_key=True)
 )
 
+
 class Ingredient(Base):
     name = Column(String(100), nullable=False)
     # устанавливаю двух сторонюю связь между моделями связанными ManyToMany
@@ -43,14 +44,14 @@ class Tag(Base):
 class Recipe(Base):
     # Добавляем поле - внешний ключ пользователя.
     # User OneToMany -> Recipe
-    author: Mapped[int] = mapped_column(ForeignKey('user.id'))
+    author_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
+    author = relationship("User", back_populates="recipes")
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
     image: Mapped[str] = mapped_column()
-    description: Mapped[str] = mapped_column(nullable=False)
+    text: Mapped[str] = mapped_column(nullable=False)
     ingredients = relationship('Ingredient', secondary=RecipesIngredients, back_populates='recipes')
     tags = relationship('Tag', secondary=RecipesTags, back_populates='recipes')
-    cooking_time: Mapped[datetime] = mapped_column(nullable=False)
-
+    cooking_time: Mapped[int] = mapped_column(nullable=False)
 
     def get_image_url(self):
         # Вернуть URL изображения для отображения, если изображения хранятся в публичной директории

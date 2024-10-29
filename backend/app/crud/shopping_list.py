@@ -1,10 +1,10 @@
 from sqlalchemy import select, and_
 from app.crud.base import CRUDBase
-from app.models import Favorite, Recipe
+from app.models import ShoppingList, Recipe
 from app.core.db import AsyncSession
 
 
-class CRUDFavorite(CRUDBase):
+class CRUDShoppingList(CRUDBase):
     async def create(
             self,
             user_id: int,
@@ -37,4 +37,4 @@ class CRUDFavorite(CRUDBase):
         return result.scalars().first()
 
 
-favorite_crud = CRUDFavorite(Favorite)
+shoppinglist_crud = CRUDShoppingList(ShoppingList)

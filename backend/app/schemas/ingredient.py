@@ -1,8 +1,10 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+
 
 class Ingredient(BaseModel):
+    id: int
     name: str
     measurement_unit: str
     amount: Optional[int]

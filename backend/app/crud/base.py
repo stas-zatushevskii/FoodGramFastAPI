@@ -2,7 +2,9 @@ from app.core.db import AsyncSession
 from app.models import User
 from typing import Optional
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
+import base64
+import os
+from uuid import uuid4
 
 
 '''
@@ -27,12 +29,29 @@ class CRUDBase:
     ):
         obj_in_data = obj_in.dict()
         if user is not None:
-            obj_in_data['author'] = user.id
+            obj_in_data['author_id'] = user.id
         db_obj = self.model(**obj_in_data)
         session.add(db_obj)
         await session.commit()
         await session.refresh(db_obj)
         return db_obj
+
+    async def save_image(
+            self,
+            image,
+    ):
+        # Генерация уникального имени файла для изображения
+        filename = f"{uuid4()}.png"
+        file_location = os.path.join('media/recipes/images/', filename)
+        # Удаление префикса 'data:image/png;base64,' если он есть
+        header, base64_str = image.split(",", 1) if ',' in image else (None, image)
+        # Декодирование строки Base64
+        image_data = base64.b64decode(base64_str)
+        # Сохранение картинки
+        with open(file_location, "wb") as file:
+            file.write(image_data)
+        filename_url = f'/media/recipes/images/{filename}'
+        return filename_url
 
     async def get(
             self,
