@@ -5,7 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.favorite import favorite_crud
 from app.crud.shopping_list import shoppinglist_crud
+from app.crud.subscription import follow_crud
 from app.models import ShoppingList, Favorite
+from app.models.user import followers
 
 
 async def check_shopping_list_exist(
@@ -58,4 +60,31 @@ async def check_favorite_exist(
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
                 detail="Рецепт уже есть в списке избранных"
+            )
+
+
+async def check_follow_exist(
+        user_id: int,
+        author_id: int,
+        session: AsyncSession,
+        exist: bool
+):
+    follow = await follow_crud.get(
+        user_id, author_id, session
+    )
+    # если подписка должна существовать для коректной проверки
+    if exist:
+        if follow is None:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail='Объект не найден!'
+            )
+        return follow
+
+    # если подписки не должен существовать для коректной проверки
+    else:
+        if follow is not None:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail="Вы уже подписанны на данного пользователя"
             )

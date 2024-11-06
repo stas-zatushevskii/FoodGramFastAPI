@@ -5,11 +5,10 @@ from app.schemas.recipe import RecipeList, RecipeDB, RecipeCreate
 from app.crud.recipe import recipe_crud
 from app.core.user import current_user
 from fastapi import Query
-from app.crud.utils import set_favorite_shoplist
+from app.crud.utils import update_recipes_with_details
 
 
 from app.models.user import User
-from app.models import Favorite, ShoppingList
 from typing import Optional, Union
 
 
@@ -43,7 +42,7 @@ async def get_recipes(
         is_favorited,
         is_in_shopping_cart
     )
-    recipes_db = await set_favorite_shoplist(all_recipes, user.id, session)
+    recipes_db = await update_recipes_with_details(all_recipes, user.id, session)
     count_recipes = await recipe_crud.count_recipes(session)
     next_page = f'/api/recipes/?page={page+1}'
     if page != 1:
@@ -96,5 +95,5 @@ async def get_recipe(
         session: AsyncSession = Depends(get_async_session),
 ):
     recipe = await recipe_crud.get(id, session)
-    recipe_db = await set_favorite_shoplist(recipe, user.id, session)
+    recipe_db = await update_recipes_with_details(recipe, user.id, session)
     return recipe_db

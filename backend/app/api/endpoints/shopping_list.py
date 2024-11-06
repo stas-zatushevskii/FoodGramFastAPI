@@ -6,12 +6,41 @@ from app.schemas.recipe import RecipeGet
 from app.schemas.shopping_list import Shopping_listBase
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.validators import check_shopping_list_exist
-from app.core.user import current_user
 from app.models.user import User
 from app.crud.shopping_list import shoppinglist_crud
-
+from app.core.user import current_user
+from app.crud.utils import get_ingredient
+from fastapi.responses import FileResponse
+import os
+from uuid import uuid4
+import aiofiles
+from io import BytesIO
+from fastapi.responses import StreamingResponse
 
 router = APIRouter()
+
+
+@router.get(
+        "/recipes/shopping_carts/download_shopping_cart/",
+)
+async def get_ingredients(
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_user)
+):
+    recipes = await shoppinglist_crud.get_recipes(user.id, session)
+    ingredients = await get_ingredient(recipes, session)
+    file_stream = BytesIO()
+    for ingredient in ingredients:
+        # Пишем текст в бинарный поток
+        file_stream.write(f'{ingredient.name} - {ingredient.amount} {ingredient.measurement_unit}\n'.encode('utf-8'))
+
+    # Возвращаем курсор в начало потока для чтения
+    file_stream.seek(0)
+
+    # Возвращаем как StreamingResponse с указанием бинарного типа
+    return StreamingResponse(file_stream, media_type='application/octet-stream', headers={
+        'Content-Disposition': 'attachment; filename="list.txt"'
+    })
 
 
 @router.get(

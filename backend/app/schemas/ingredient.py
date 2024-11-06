@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class Ingredient(BaseModel):
-    id: int
+    id: Optional[int]
     name: str
     measurement_unit: str
     amount: Optional[int]
@@ -14,7 +14,7 @@ class Ingredient(BaseModel):
 
 
 class IngredientInRecipe(BaseModel):
-    id: int
+    id: Optional[int]
     amount: Optional[int]
 
     class Config:

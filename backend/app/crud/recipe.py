@@ -1,11 +1,10 @@
 from app.models.model import (
     Recipe, RecipesIngredients, RecipesTags, Favorite,
     ShoppingList, RecipesIngredients, RecipesTags, Tag,
-    Ingredient
     )
 from app.models.user import User
 from app.crud.base import CRUDBase
-from typing import Optional
+from typing import Optional, Union
 from app.core.db import AsyncSession
 from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
@@ -17,6 +16,7 @@ class CRUDRecipe(CRUDBase):
             obj_id: int,
             session: AsyncSession,
     ):
+
         db_obj = await session.execute(
             select(self.model).where(self.model.id == obj_id).options(
                     selectinload(self.model.tags),
@@ -27,12 +27,20 @@ class CRUDRecipe(CRUDBase):
 
     async def count_recipes(
             self,
-            session: AsyncSession
+            session: AsyncSession,
+            author_id: Optional[int] = None
     ):
-        count = await session.execute(
-            select(func.count(self.model.id))
-        )
-        return count.scalar()
+        if author_id is None:
+            count = await session.execute(
+                select(func.count(self.model.id))
+            )
+            return count.scalar()
+        else:
+            count = await session.execute(
+                select(func.count(self.model.id))
+                .where(self.model.author == author_id)
+            )
+            return count.scalar()
 
     async def create(
             self,
@@ -63,20 +71,21 @@ class CRUDRecipe(CRUDBase):
             ingredient_data = ingredient.dict()
             ingredient_id = ingredient_data['id']
             ingredient_amount = ingredient_data['amount']
-            db_ingredient_obj = RecipesIngredients.insert().values(
+            
+            db_ingredient_obj = RecipesIngredients(
                 ingredient_id=ingredient_id,
                 recipe_id=db_obj.id,
                 amount=ingredient_amount
             )
-            await session.execute(db_ingredient_obj)
+            session.add(db_ingredient_obj)
 
         # добовление тегов
         for tag in tags:
-            db_tag_obj = RecipesTags.insert().values(
+            db_tag_obj = RecipesTags(
                 tag_id=tag,
                 recipe_id=db_obj.id,
             )
-            await session.execute(db_tag_obj)
+            session.add(db_tag_obj)
 
         await session.commit()
         recipe = await session.execute(select(self.model).options(
@@ -134,25 +143,34 @@ class CRUDRecipe(CRUDBase):
     async def get_by_author(
             self,
             session: AsyncSession,
-            author_id: int
+            author_id: int,
+            limit: Optional[int] = None
     ):
-        recipes = await session.execute(
-            select(self.model).where(
-                self.model.author_id == author_id
+        if limit is None:
+            recipes = await session.execute(
+                select(self.model).where(
+                    self.model.author_id == author_id
+                )
             )
-        )
-        return recipes.scalars().all()
+            return recipes.scalars().all()
+        else:
+            recipes = await session.execute(
+                select(self.model).where(
+                    self.model.author_id == author_id
+                ).limit(limit)
+            )
+            return recipes.scalars().all()
 
     async def get_recipes_with_param(
             self,
             session: AsyncSession,
             start: int,
             limit: int,
-            author_id: Optional[int],
-            user_id: Optional[int],
-            tags: list[str],
-            is_favorited: Optional[bool],
-            is_in_shopping_cart: Optional[bool],
+            author_id: Optional[Union[int, list[int]]] = None,
+            user_id: Optional[Union[int, list[int]]] = None,
+            tags: Optional[list[str]] = None,
+            is_favorited: Optional[bool] = None,
+            is_in_shopping_cart: Optional[bool] = None,
     ):
         recipes = select(self.model).options(
             selectinload(self.model.tags),
@@ -160,9 +178,15 @@ class CRUDRecipe(CRUDBase):
             selectinload(self.model.author)
             )
         if author_id:
-            recipes = recipes.where(
-                    self.model.author_id == author_id
-                )
+            # если author_id - list то гуд
+            # если же нет то в in_ передается
+            # [author_id]
+            author_id = author_id if isinstance(
+                author_id,
+                list
+            ) else [author_id]
+            recipes = recipes.filter(
+                    self.model.author_id.in_(author_id))
 
         if tags:
             recipes = recipes.join(
@@ -170,17 +194,26 @@ class CRUDRecipe(CRUDBase):
             ).join(Tag).filter(Tag.slug.in_(tags))
 
         if is_favorited:
-            recipes = recipes.join(Favorite).where(
-                Favorite.user == user_id)
+            user_id = user_id if isinstance(
+                user_id,
+                list
+            ) else [author_id]
+            recipes = recipes.join(Favorite).filter(
+                Favorite.user.in_(user_id))
 
         if is_in_shopping_cart:
-            recipes = recipes.join(ShoppingList).where(
-                ShoppingList.user == user_id)
+            user_id = user_id if isinstance(
+                user_id,
+                list
+            ) else [author_id]
+            recipes = recipes.join(ShoppingList).filter(
+                ShoppingList.user.in_(user_id))
 
         result = await session.execute(
             recipes.offset(start).limit(limit).distinct()
         )
-        return result.scalars().all()
+        recipe = result.scalars().all()
+        return recipe
 
 
 recipe_crud = CRUDRecipe(Recipe)

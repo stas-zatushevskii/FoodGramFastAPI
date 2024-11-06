@@ -12,12 +12,7 @@ class PreBase:
         # Именем таблицы будет название модели в нижнем регистре.
         return cls.__name__.lower()
 
-    # Во все таблицы будет добавлено поле ID.
-    id: Mapped[int] = mapped_column(primary_key=True)
 
-
-# базовый класс для будущих моделей:
-# В качестве основы для базового класса укажем класс PreBase.
 Base = declarative_base(cls=PreBase)
 
 

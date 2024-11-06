@@ -392,7 +392,7 @@ class Api {
   downloadFile () {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/recipes/download_shopping_cart/`,
+      `/api/recipes/shopping_carts/download_shopping_cart/`,
       {
         method: 'GET',
         headers: {
