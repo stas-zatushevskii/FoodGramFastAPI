@@ -125,26 +125,26 @@ async def get_follows_with_param(
     if type(authors) is list:
         for author in authors:
             author_db = UserRecipes.from_orm(author)
-            author_db.is_subscribed = follow_crud.get_is_subscribed(
+            author_db.is_subscribed = await follow_crud.get_is_subscribed(
                 user_id=user_id, author_id=author.id, session=session
             )
-            author_db.recipes = recipe_crud.get_by_author(
+            author_db.recipes_made = await recipe_crud.get_by_author(
                 author_id=author.id, session=session, limit=recipes_limit
             )
-            author_db = recipe_crud.count_recipes(
+            author_db.recipes_count = await recipe_crud.count_recipes(
                 session=session, author_id=author.id
                 )
             results.append(author_db)
         return results
     else:
-        author_db = UserRecipes.from_orm(author)
-        author_db.is_subscribed = follow_crud.get_is_subscribed(
-            user_id=user_id, author_id=author.id, session=session
+        author_db = UserRecipes.from_orm(authors)
+        author_db.is_subscribed = await follow_crud.get_is_subscribed(
+            user_id=user_id, author_id=authors.id, session=session
         )
-        author_db.recipes = recipe_crud.get_by_author(
-            author_id=author.id, session=session, limit=recipes_limit
+        author_db.recipes_made = await recipe_crud.get_by_author(
+            author_id=authors.id, session=session, limit=recipes_limit
         )
-        author_db = recipe_crud.count_recipes(
-            session=session, author_id=author.id
+        author_db.recipes_count = await recipe_crud.count_recipes(
+            session=session, author_id=authors.id
             )
         return author_db

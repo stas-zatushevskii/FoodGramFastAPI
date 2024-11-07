@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, FilePath
 from datetime import datetime
 from .ingredient import Ingredient, IngredientInRecipe
-from .user import UserGet
+from .user import UserInRecipe
 from fastapi import UploadFile
 from .tag import Tag
 
@@ -38,7 +38,7 @@ class RecipeGet(RecipeBase):
 class RecipeDB(RecipeBase):
     id: int
     tags: Optional[list[Tag]]
-    author: UserGet
+    author: UserInRecipe
     ingredients: Optional[list[Ingredient]]
     is_favorited: Optional[bool] = False
     is_in_shopping_cart: Optional[bool] = False

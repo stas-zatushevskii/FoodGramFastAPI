@@ -1,7 +1,6 @@
 from fastapi_users import schemas
 from pydantic import BaseModel, EmailStr
 from typing import Optional
-from app.schemas.recipe import RecipeGet
 
 
 class UserRead(schemas.BaseUser[int]):
@@ -20,15 +19,28 @@ class UserUpdate(schemas.BaseUserUpdate):
     pass
 
 
+class UserInRecipe(BaseModel):
+    first_name: str
+    last_name: str
+    username: str
+    id: int
+    email: EmailStr
+    is_subscribed: Optional[bool] = False
+    recipes_count: Optional[int] = 0
+
+    class Config:
+        orm_mode = True
+
+
 class UserRecipes(BaseModel):
     first_name: str
     last_name: str
     username: str
     id: int
     email: EmailStr
-    is_subscribed: Optional[bool]
-    recipes: Optional[list[RecipeGet]]
-    recipes_count: Optional[int]
+    is_subscribed: Optional[bool] = False
+    recipes_made: Optional[list] = []
+    recipes_count: Optional[int] = 0
 
     class Config:
         orm_mode = True

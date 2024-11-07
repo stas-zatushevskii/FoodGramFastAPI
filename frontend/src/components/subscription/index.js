@@ -10,7 +10,7 @@ const countForm = (number, titles) => {
   return titles[1];
 }
 
-const Subscription = ({ email, first_name, last_name, username, removeSubscription, recipes_count, id, recipes }) => {
+const Subscription = ({ email, first_name, last_name, username, removeSubscription, recipes_count, id, recipes_made }) => {
   const shouldShowButton = recipes_count  > 3
   const moreRecipes = recipes_count - 3
   return <div className={styles.subscription}>
@@ -21,7 +21,7 @@ const Subscription = ({ email, first_name, last_name, username, removeSubscripti
     </div>
     <div className={styles.subscriptionBody}>
       <ul className={styles.subscriptionItems}>
-        {recipes.map(recipe => {
+        {recipes_made.map(recipe => {
           return <li className={styles.subscriptionItem} key={recipe.id}>
             <LinkComponent className={styles.subscriptionRecipeLink} href={`/recipes/${recipe.id}`} title={
               <div className={styles.subscriptionRecipe}>

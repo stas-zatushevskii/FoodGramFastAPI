@@ -1,7 +1,7 @@
 from app.core.db import get_async_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends
-from app.schemas.recipe import RecipeList, RecipeDB, RecipeCreate
+from app.schemas.recipe import RecipeList, RecipeDB, RecipeCreate, UserInRecipe
 from app.crud.recipe import recipe_crud
 from app.core.user import current_user
 from fastapi import Query

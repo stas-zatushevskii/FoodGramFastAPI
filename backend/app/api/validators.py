@@ -69,7 +69,7 @@ async def check_follow_exist(
         session: AsyncSession,
         exist: bool
 ):
-    follow = await follow_crud.get(
+    follow = await follow_crud.get_follow(
         user_id, author_id, session
     )
     # если подписка должна существовать для коректной проверки

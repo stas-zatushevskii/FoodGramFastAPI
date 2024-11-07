@@ -38,7 +38,7 @@ class CRUDRecipe(CRUDBase):
         else:
             count = await session.execute(
                 select(func.count(self.model.id))
-                .where(self.model.author == author_id)
+                .where(self.model.author_id == author_id)
             )
             return count.scalar()
 
