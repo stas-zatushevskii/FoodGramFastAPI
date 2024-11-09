@@ -1,11 +1,12 @@
 from app.core.db import get_async_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends
-from app.schemas.recipe import RecipeList, RecipeDB, RecipeCreate, UserInRecipe
+from app.schemas.recipe import RecipeList, RecipeDB, RecipeCreate, UserInRecipe, RecipeUpdate
 from app.crud.recipe import recipe_crud
 from app.core.user import current_user
 from fastapi import Query
 from app.crud.utils import update_recipes_with_details
+from app.api.validators import check_recipe_exist
 
 
 from app.models.user import User
@@ -97,3 +98,37 @@ async def get_recipe(
     recipe = await recipe_crud.get(id, session)
     recipe_db = await update_recipes_with_details(recipe, user.id, session)
     return recipe_db
+
+
+@router.patch(
+    '/recipes/{recipe_id}/',
+    response_model=RecipeDB,
+    response_model_exclude_none=True
+)
+async def update_recipe(
+    recipe_id: int,
+    recipe_in: RecipeUpdate,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    recipe_db = await recipe_crud.get(recipe_id, session)
+    recipe_update = await recipe_crud.update(recipe_db, recipe_in, session)
+    recipe_with_detail = await update_recipes_with_details(
+        recipe_update, user.id, session
+        )
+    return recipe_with_detail
+
+
+@router.delete(
+    '/recipes/{recipe_id}/'
+)
+async def delete_recipe(
+    recipe_id: int,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    reccipe = await check_recipe_exist(
+        user.id, recipe_id, session
+    )
+    await recipe_crud.delete(reccipe)
+    return {'message': 'Рецепт успешно удален'}

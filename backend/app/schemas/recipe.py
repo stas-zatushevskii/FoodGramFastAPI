@@ -21,8 +21,12 @@ class RecipeCreate(RecipeBase):
 
 
 class RecipeUpdate(RecipeBase):
-    ingredients: list[Ingredient]
-    tags: list[int]
+    ingredients: Optional[list[IngredientInRecipe]]
+    tags: Optional[list[int]]
+    image: Optional[str]
+    name: Optional[str]
+    text: Optional[str]
+    cooking_time: Optional[int]
 
 
 class RecipeGet(RecipeBase):

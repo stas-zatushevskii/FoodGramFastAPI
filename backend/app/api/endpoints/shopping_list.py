@@ -10,12 +10,10 @@ from app.models.user import User
 from app.crud.shopping_list import shoppinglist_crud
 from app.core.user import current_user
 from app.crud.utils import get_ingredient
-from fastapi.responses import FileResponse
-import os
 from uuid import uuid4
-import aiofiles
 from io import BytesIO
 from fastapi.responses import StreamingResponse
+from app.core.user import current_user
 
 router = APIRouter()
 
@@ -49,9 +47,10 @@ async def get_ingredients(
         response_model_exclude_none=True
 )
 async def get_shopping_list(
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_user)
 ):
-    shopping_list = await shoppinglist_crud.get_multi(session)
+    shopping_list = await shoppinglist_crud.get_recipes(user.id, session)
     return shopping_list
 
 

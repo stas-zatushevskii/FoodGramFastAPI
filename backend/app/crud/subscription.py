@@ -124,9 +124,9 @@ class CRUDFollow(CRUDBase):
             author_id: int,
             session: AsyncSession
     ):
-        follow = delete(followers).where(
+        follow = delete(followers).where(and_(
             followers.c.author_id == author_id,
-            followers.c.follower_id == user_id
+            followers.c.follower_id == user_id)
         )
         await session.execute(follow)
         await session.commit()

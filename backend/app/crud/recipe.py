@@ -6,8 +6,12 @@ from app.models.user import User
 from app.crud.base import CRUDBase
 from typing import Optional, Union
 from app.core.db import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select, func, and_, delete
 from sqlalchemy.orm import selectinload
+from fastapi.encoders import jsonable_encoder
+from app.schemas.recipe import RecipeUpdate, RecipeCreate
+from app.crud.ingredient import ingredient_crud
+from app.crud.tag import tag_crud
 
 
 class CRUDRecipe(CRUDBase):
@@ -71,7 +75,7 @@ class CRUDRecipe(CRUDBase):
             ingredient_data = ingredient.dict()
             ingredient_id = ingredient_data['id']
             ingredient_amount = ingredient_data['amount']
-            
+
             db_ingredient_obj = RecipesIngredients(
                 ingredient_id=ingredient_id,
                 recipe_id=db_obj.id,
@@ -214,6 +218,75 @@ class CRUDRecipe(CRUDBase):
         )
         recipe = result.scalars().all()
         return recipe
+
+    async def update(
+            self,
+            db_obj: RecipeCreate,
+            in_obj: RecipeUpdate,
+            session: AsyncSession
+    ):
+        obj_data = jsonable_encoder(db_obj)
+        update_data = in_obj.dict(exclude_unset=True)
+        for field in update_data:
+            if field in obj_data:
+                if field == 'ingredients':
+                    # ingredients_delete = []
+                    # ingredients_add = []
+                    # crud function to update ingredients in recipe
+                    ingredients_old = [
+                        ingredient['id'] for ingredient in obj_data[field]
+                    ]
+                    ingredients_new = [
+                        ingredient['id'] for ingredient in update_data[field]
+                    ]
+                    ingredients_delete = set(ingredients_old) - set(
+                        ingredients_new
+                        )
+                    ingredients_add = set(ingredients_new) - set(
+                        ingredients_old
+                        )
+                    ingredients_add_obj = [
+                        ingredient for ingredient in update_data[field] if ingredient['id'] in ingredients_add
+                        ]
+                    if ingredients_add_obj or ingredients_delete:
+                        await ingredient_crud.ingredints_update(
+                            ingredients_delete,
+                            ingredients_add_obj,
+                            db_obj.id,
+                            session
+                        )
+                    continue
+                elif field == 'tags':
+                    # crud function to update tags in recipe
+                    tags_old = [
+                        tag['id'] for tag in obj_data[field]
+                    ]
+                    tags_new = [
+                        tag for tag in update_data[field]
+                    ]
+                    tags_delete = set(tags_old) - set(
+                        tags_new
+                    )
+                    tags_add = set(tags_new) - set(
+                        tags_old
+                    )
+                    if tags_add or tags_delete:
+                        await tag_crud.tags_update(
+                            tags_delete,
+                            tags_add,
+                            db_obj.id,
+                            session
+                        )
+                    continue
+                elif field == 'image':
+                    update_data[field] = await recipe_crud.save_image(
+                        update_data[field]
+                    )
+                setattr(db_obj, field, update_data[field])
+        session.add(db_obj)
+        await session.commit()
+        await session.refresh(db_obj)
+        return db_obj
 
 
 recipe_crud = CRUDRecipe(Recipe)
