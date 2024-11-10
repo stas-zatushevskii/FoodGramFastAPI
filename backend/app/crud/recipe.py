@@ -32,17 +32,32 @@ class CRUDRecipe(CRUDBase):
     async def count_recipes(
             self,
             session: AsyncSession,
-            author_id: Optional[int] = None
+            author_id: Optional[int] = None,
+            user_id: Optional[int] = None,
+            is_shopping_card: Optional[bool] = False,
+            favorite: Optional[bool] = False
     ):
-        if author_id is None:
+        if is_shopping_card is True:
+            count = await session.execute(
+                select(func.count(ShoppingList.id))
+                .where(ShoppingList.user == user_id)
+            )
+            return count.scalar()
+        elif favorite is True:
+            count = await session.execute(
+                select(func.count(Favorite.id))
+                .where(Favorite.user == user_id)
+            )
+            return count.scalar()
+        elif author_id is not None:
             count = await session.execute(
                 select(func.count(self.model.id))
+                .where(self.model.author_id == author_id)
             )
             return count.scalar()
         else:
             count = await session.execute(
                 select(func.count(self.model.id))
-                .where(self.model.author_id == author_id)
             )
             return count.scalar()
 
@@ -201,7 +216,7 @@ class CRUDRecipe(CRUDBase):
             user_id = user_id if isinstance(
                 user_id,
                 list
-            ) else [author_id]
+            ) else [user_id]
             recipes = recipes.join(Favorite).filter(
                 Favorite.user.in_(user_id))
 

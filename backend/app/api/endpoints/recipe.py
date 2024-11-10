@@ -44,7 +44,12 @@ async def get_recipes(
         is_in_shopping_cart
     )
     recipes_db = await update_recipes_with_details(all_recipes, user.id, session)
-    count_recipes = await recipe_crud.count_recipes(session)
+    count_recipes = await recipe_crud.count_recipes(
+        session,
+        user_id=user.id,
+        is_shopping_card=is_in_shopping_cart,
+        favorite=is_favorited,
+    )
     next_page = f'/api/recipes/?page={page+1}'
     if page != 1:
         previous_page = f'/api/recipes/?page={page-1}'

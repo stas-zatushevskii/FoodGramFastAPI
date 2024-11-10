@@ -15,6 +15,11 @@ class UserCreate(schemas.BaseUserCreate):
     username: str
 
 
+class UsreChangePassword(BaseModel):
+    current_password: str
+    new_password: str
+
+
 class UserUpdate(schemas.BaseUserUpdate):
     pass
 
