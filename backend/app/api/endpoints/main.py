@@ -15,7 +15,7 @@ router = APIRouter()
 async def load_data(file_path: str, session: AsyncSession = Depends(get_async_session)):
     try:
         # Чтение JSON файла из указанного пути
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             data = json.load(file)
     except (json.JSONDecodeError, FileNotFoundError) as e:
         raise HTTPException(status_code=400, detail=f"Error loading file: {str(e)}")

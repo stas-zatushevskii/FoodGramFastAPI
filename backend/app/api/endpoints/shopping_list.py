@@ -20,70 +20,74 @@ router = APIRouter()
 
 
 @router.get(
-        "/recipes/shopping_carts/download_shopping_cart/",
+    "/recipes/shopping_carts/download_shopping_cart/",
 )
 async def get_ingredients(
     session: AsyncSession = Depends(get_async_session),
-    user: User = Depends(current_user)
+    user: User = Depends(current_user),
 ):
     recipes = await shoppinglist_crud.get_recipes(user.id, session)
     ingredients = await get_ingredient(recipes, session)
     file_stream = BytesIO()
     for ingredient in ingredients:
         # Пишем текст в бинарный поток
-        file_stream.write(f'{ingredient.name} - {ingredient.amount} {ingredient.measurement_unit}\n'.encode('utf-8'))
+        file_stream.write(
+            f"{ingredient.name} - {ingredient.amount} {ingredient.measurement_unit}\n".encode(
+                "utf-8"
+            )
+        )
 
     # Возвращаем курсор в начало потока для чтения
     file_stream.seek(0)
 
     # Возвращаем как StreamingResponse с указанием бинарного типа
-    return StreamingResponse(file_stream, media_type='application/octet-stream', headers={
-        'Content-Disposition': 'attachment; filename="list.txt"'
-    })
+    return StreamingResponse(
+        file_stream,
+        media_type="application/octet-stream",
+        headers={"Content-Disposition": 'attachment; filename="list.txt"'},
+    )
 
 
 @router.get(
-        "/shopping_carts/",
-        response_model=list[Shopping_listBase],
-        response_model_exclude_none=True
+    "/shopping_carts/",
+    response_model=list[Shopping_listBase],
+    response_model_exclude_none=True,
 )
 async def get_shopping_list(
     session: AsyncSession = Depends(get_async_session),
-    user: User = Depends(current_user)
+    user: User = Depends(current_user),
 ):
-    shopping_list = await shoppinglist_crud.get_lists(
-        user.id, session
-    )
+    shopping_list = await shoppinglist_crud.get_lists(user.id, session)
 
     return shopping_list
 
 
 @router.post(
-        "/recipes/{recipe_id}/shopping_cart/",
-        response_model=RecipeGet,
-        response_model_exclude_none=True
+    "/recipes/{recipe_id}/shopping_cart/",
+    response_model=RecipeGet,
+    response_model_exclude_none=True,
 )
 async def add_in_shoplist(
     recipe_id: int,
     user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
 ):
     result = await check_shopping_list_exist(user.id, recipe_id, session, exist=False)
     result = await shoppinglist_crud.create(user.id, recipe_id, session)
     return result
 
 
-@router.delete(
-        "/recipes/{recipe_id}/shopping_cart/",
-        response_model_exclude_none=True
-)
+@router.delete("/recipes/{recipe_id}/shopping_cart/", response_model_exclude_none=True)
 async def delete_shoplist(
     recipe_id: int,
     user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
 ):
     shopping_list = await check_shopping_list_exist(
-        user.id, recipe_id, session, exist=True,
+        user.id,
+        recipe_id,
+        session,
+        exist=True,
     )
     await shoppinglist_crud.delete(shopping_list, session)
-    return {'message': 'Рецепт успешно удален из списка!'}
+    return {"message": "Рецепт успешно удален из списка!"}

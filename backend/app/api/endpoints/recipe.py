@@ -15,19 +15,19 @@ router = APIRouter()
 
 
 @router.get(
-        "/recipes/",
-        response_model=RecipeList,
-        response_model_exclude_none=True,
+    "/recipes/",
+    response_model=RecipeList,
+    response_model_exclude_none=True,
 )
 async def get_recipes(
-        session: AsyncSession = Depends(get_async_session),
-        page: int = 1,
-        limit: int = 6,
-        is_favorited: Optional[bool] = False,
-        is_in_shopping_cart: Optional[bool] = False,
-        author_id: Optional[int] = None,
-        tags: Optional[list[str]] = Query(None),
-        user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session),
+    page: int = 1,
+    limit: int = 6,
+    is_favorited: Optional[bool] = False,
+    is_in_shopping_cart: Optional[bool] = False,
+    author_id: Optional[int] = None,
+    tags: Optional[list[str]] = Query(None),
+    user: User = Depends(current_user),
 ):
     start = (page - 1) * limit
     user_id = user.id
@@ -39,7 +39,7 @@ async def get_recipes(
         user_id,
         tags,
         is_favorited,
-        is_in_shopping_cart
+        is_in_shopping_cart,
     )
     recipes_db = await update_recipes_with_details(all_recipes, user.id, session)
     count_recipes = await recipe_crud.count_recipes(
@@ -48,11 +48,11 @@ async def get_recipes(
         is_shopping_card=is_in_shopping_cart,
         favorite=is_favorited,
     )
-    next_page = f'/api/recipes/?page={page+1}'
+    next_page = f"/api/recipes/?page={page+1}"
     if page != 1:
-        previous_page = f'/api/recipes/?page={page-1}'
+        previous_page = f"/api/recipes/?page={page-1}"
     else:
-        previous_page = f'/api/recipes/?page={page}'
+        previous_page = f"/api/recipes/?page={page}"
     return {
         "count": count_recipes,
         "next": next_page,
@@ -62,41 +62,41 @@ async def get_recipes(
 
 
 @router.post(
-    '/recipes/',
+    "/recipes/",
     response_model=RecipeDB,
     response_model_exclude_none=True,
 )
 async def create_new_recipe(
-        recipe: RecipeCreate,
-        session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_user),
+    recipe: RecipeCreate,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_user),
 ):
     new_recipe = await recipe_crud.create(recipe, session, user)
     return new_recipe
 
 
 @router.get(
-    '/recipes',
+    "/recipes",
     response_model=Union[RecipeDB, list[RecipeDB]],
     response_model_exclude_none=True,
 )
 async def get_recipe_by_author(
-        session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_user),
 ):
     author_id = user.id
     return await recipe_crud.get_by_author(session, author_id)
 
 
 @router.get(
-    '/recipes/{id}/',
+    "/recipes/{id}/",
     response_model=RecipeDB,
     response_model_exclude_none=True,
 )
 async def get_recipe(
-        id: int,
-        user: User = Depends(current_user),
-        session: AsyncSession = Depends(get_async_session),
+    id: int,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_session),
 ):
     recipe = await recipe_crud.get(id, session)
     recipe_db = await update_recipes_with_details(recipe, user.id, session)
@@ -104,34 +104,28 @@ async def get_recipe(
 
 
 @router.patch(
-    '/recipes/{recipe_id}/',
-    response_model=RecipeDB,
-    response_model_exclude_none=True
+    "/recipes/{recipe_id}/", response_model=RecipeDB, response_model_exclude_none=True
 )
 async def update_recipe(
     recipe_id: int,
     recipe_in: RecipeUpdate,
     user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
 ):
     recipe_db = await recipe_crud.get(recipe_id, session)
     recipe_update = await recipe_crud.update(recipe_db, recipe_in, session)
     recipe_with_detail = await update_recipes_with_details(
         recipe_update, user.id, session
-        )
+    )
     return recipe_with_detail
 
 
-@router.delete(
-    '/recipes/{recipe_id}/'
-)
+@router.delete("/recipes/{recipe_id}/")
 async def delete_recipe(
     recipe_id: int,
     user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
 ):
-    reccipe = await check_recipe_exist(
-        recipe_id, user.id, session
-    )
+    reccipe = await check_recipe_exist(recipe_id, user.id, session)
     await recipe_crud.delete(reccipe, session)
-    return {'message': 'Рецепт успешно удален'}
+    return {"message": "Рецепт успешно удален"}

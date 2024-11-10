@@ -13,11 +13,7 @@ from app.schemas.recipe import RecipeDB
 from app.schemas.user import UserRecipes
 
 
-async def update_recipes_with_details(
-        recipes,
-        user_id: int,
-        session: AsyncSession
-):
+async def update_recipes_with_details(recipes, user_id: int, session: AsyncSession):
     if type(recipes) is list:
         updated_recipes = []
         for recipe in recipes:
@@ -25,12 +21,8 @@ async def update_recipes_with_details(
             recipe_db.ingredients = []
             # favorite и shopping_list
 
-            is_favorited = await favorite_crud.get(
-                user_id, recipe.id, session
-            )
-            is_shoplist = await shoppinglist_crud.get(
-                user_id, recipe.id, session
-            )
+            is_favorited = await favorite_crud.get(user_id, recipe.id, session)
+            is_shoplist = await shoppinglist_crud.get(user_id, recipe.id, session)
 
             if is_favorited is not None:
                 recipe_db.is_favorited = True
@@ -41,11 +33,13 @@ async def update_recipes_with_details(
             for ingredient in recipe.ingredients:
                 ingredient_db = Ingredient.from_orm(ingredient)
                 amount = await session.execute(
-                    select(RecipesIngredients.amount).
-                    where(and_(
-                        RecipesIngredients.recipe_id == recipe.id,
-                        RecipesIngredients.ingredient_id == ingredient.id)
-                    ))
+                    select(RecipesIngredients.amount).where(
+                        and_(
+                            RecipesIngredients.recipe_id == recipe.id,
+                            RecipesIngredients.ingredient_id == ingredient.id,
+                        )
+                    )
+                )
                 ingredient_db.amount = amount.scalars().first()
                 recipe_db.ingredients.append(ingredient_db)
             updated_recipes.append(recipe_db)
@@ -55,12 +49,8 @@ async def update_recipes_with_details(
         recipe_db.ingredients = []
         # favorite и shopping_list
 
-        is_favorited = await favorite_crud.get(
-            user_id, recipes.id, session
-        )
-        is_shoplist = await shoppinglist_crud.get(
-            user_id, recipes.id, session
-        )
+        is_favorited = await favorite_crud.get(user_id, recipes.id, session)
+        is_shoplist = await shoppinglist_crud.get(user_id, recipes.id, session)
 
         if is_favorited is not None:
             recipe_db.is_favorited = True
@@ -71,32 +61,33 @@ async def update_recipes_with_details(
         for ingredient in recipes.ingredients:
             ingredient_db = Ingredient.from_orm(ingredient)
             amount = await session.execute(
-                select(RecipesIngredients.amount).
-                where(and_(
-                    RecipesIngredients.recipe_id == recipes.id,
-                    RecipesIngredients.ingredient_id == ingredient.id)
-                ))
+                select(RecipesIngredients.amount).where(
+                    and_(
+                        RecipesIngredients.recipe_id == recipes.id,
+                        RecipesIngredients.ingredient_id == ingredient.id,
+                    )
+                )
+            )
             ingredient_db.amount = amount.scalars().first()
             recipe_db.ingredients.append(ingredient_db)
         recipes = recipe_db
     return recipes
 
 
-async def get_ingredient(
-        recipes,
-        session: AsyncSession
-):
+async def get_ingredient(recipes, session: AsyncSession):
     if type(recipes) is list:
         updated_ingredients = []
         for recipe in recipes:
             for ingredient in recipe.ingredients:
                 ingredient_db = Ingredient.from_orm(ingredient)
                 amount = await session.execute(
-                    select(RecipesIngredients.amount).
-                    where(and_(
-                        RecipesIngredients.recipe_id == recipe.id,
-                        RecipesIngredients.ingredient_id == ingredient.id)
-                    ))
+                    select(RecipesIngredients.amount).where(
+                        and_(
+                            RecipesIngredients.recipe_id == recipe.id,
+                            RecipesIngredients.ingredient_id == ingredient.id,
+                        )
+                    )
+                )
                 ingredient_db.amount = amount.scalars().first()
                 if ingredient_db not in updated_ingredients:
                     updated_ingredients.append(ingredient_db)
@@ -105,22 +96,23 @@ async def get_ingredient(
         for ingredient in recipes.ingredients:
             ingredient_db = Ingredient.from_orm(ingredient)
             amount = await session.execute(
-                select(RecipesIngredients.amount).
-                where(and_(
-                    RecipesIngredients.recipe_id == recipe.id,
-                    RecipesIngredients.ingredient_id == ingredient.id)
-                ))
+                select(RecipesIngredients.amount).where(
+                    and_(
+                        RecipesIngredients.recipe_id == recipe.id,
+                        RecipesIngredients.ingredient_id == ingredient.id,
+                    )
+                )
+            )
             ingredient_db.amount = amount.scalars().first()
         ingredient = ingredient_db
     return ingredient
 
 
 async def get_follows_with_param(
-        user_id: int,
-        recipes_limit: int,
-        authors: Union[list[User], User],
-        session: AsyncSession
-
+    user_id: int,
+    recipes_limit: int,
+    authors: Union[list[User], User],
+    session: AsyncSession,
 ):
     results = []
     if type(authors) is list:
@@ -134,7 +126,7 @@ async def get_follows_with_param(
             )
             author_db.recipes_count = await recipe_crud.count_recipes(
                 session=session, author_id=author.id
-                )
+            )
             results.append(author_db)
         return results
     else:
@@ -147,5 +139,5 @@ async def get_follows_with_param(
         )
         author_db.recipes_count = await recipe_crud.count_recipes(
             session=session, author_id=authors.id
-            )
+        )
         return author_db

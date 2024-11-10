@@ -10,12 +10,13 @@ from app.schemas.ingredient import Ingredient
 router = APIRouter()
 
 
-@router.get('/ingredients/',
-            response_model=list[Ingredient],
-            response_model_exclude_none=True)
+@router.get(
+    "/ingredients/", response_model=list[Ingredient], response_model_exclude_none=True
+)
 async def get_ingredients(
-        session: AsyncSession = Depends(get_async_session),
-        name: Optional[str] = Query(None)):
+    session: AsyncSession = Depends(get_async_session),
+    name: Optional[str] = Query(None),
+):
     if name is not None:
         all_ingredients = await ingredient_crud.get_ingredient_by_name(name, session)
     else:
@@ -23,12 +24,12 @@ async def get_ingredients(
     return all_ingredients
 
 
-@router.get('/ingredients/{id}/',
-            response_model=Ingredient,
-            response_model_exclude_none=True)
+@router.get(
+    "/ingredients/{id}/", response_model=Ingredient, response_model_exclude_none=True
+)
 async def get_ingredient(
-        id: int,
-        session: AsyncSession = Depends(get_async_session),
+    id: int,
+    session: AsyncSession = Depends(get_async_session),
 ):
     ingredient = await ingredient_crud.get(id, session)
     return ingredient
