@@ -1,15 +1,16 @@
-from app.schemas.recipe import RecipeDB
-from app.schemas.ingredient import Ingredient
-from app.core.db import AsyncSession
-from app.crud.shopping_list import shoppinglist_crud
-from app.crud.favorite import favorite_crud
-from app.models import RecipesIngredients
-from app.models import User
-from sqlalchemy import select, and_
-from app.schemas.user import UserRecipes
-from app.crud.recipe import recipe_crud
-from app.crud.subscription import follow_crud
 from typing import Union
+
+from sqlalchemy import and_, select
+
+from app.core.db import AsyncSession
+from app.crud.favorite import favorite_crud
+from app.crud.recipe import recipe_crud
+from app.crud.shopping_list import shoppinglist_crud
+from app.crud.subscription import follow_crud
+from app.models import RecipesIngredients, User
+from app.schemas.ingredient import Ingredient
+from app.schemas.recipe import RecipeDB
+from app.schemas.user import UserRecipes
 
 
 async def update_recipes_with_details(

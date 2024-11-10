@@ -1,8 +1,8 @@
-from app.crud.base import CRUDBase
-from app.models import Tag
+from sqlalchemy import and_, select
+
 from app.core.db import AsyncSession
-from app.models import RecipesTags
-from sqlalchemy import select, and_
+from app.crud.base import CRUDBase
+from app.models import RecipesTags, Tag
 
 
 class CRUDTag(CRUDBase):

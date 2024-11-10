@@ -1,13 +1,11 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
-
-from app.schemas.ingredient import Ingredient
-from app.crud.ingredient import ingredient_crud
-
-from app.core.db import get_async_session
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.db import get_async_session
+from app.crud.ingredient import ingredient_crud
+from app.schemas.ingredient import Ingredient
 
 router = APIRouter()
 

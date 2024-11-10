@@ -1,11 +1,10 @@
 
 import os
 
-from sqlalchemy import Column, String, ForeignKey
-from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base  # noqa
-
 
 '''RecipesIngredients = Table(
     'recipe_ingredients',

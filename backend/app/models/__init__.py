@@ -1,3 +1,4 @@
 
-from .user import User, followers    # noqa
-from .model import Ingredient, Tag, Recipe, Favorite, ShoppingList, RecipesIngredients, RecipesTags     # noqa
+from .model import (Favorite, Ingredient, Recipe, RecipesIngredients,  # noqa
+                    RecipesTags, ShoppingList, Tag)
+from .user import User, followers  # noqa

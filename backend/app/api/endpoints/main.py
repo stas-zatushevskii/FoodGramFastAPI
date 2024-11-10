@@ -1,8 +1,10 @@
-from fastapi import HTTPException, Depends, APIRouter
 import json
-from app.models import Ingredient
-from app.core.db import get_async_session
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.db import get_async_session
+from app.models import Ingredient
 
 # session: AsyncSession = Depends(get_async_session),
 #  [{"name": "абрикосовое варенье", "measurement_unit": "г"}]

@@ -1,17 +1,17 @@
-from app.models.model import (
-    Recipe, RecipesIngredients, RecipesTags, Favorite,
-    ShoppingList, RecipesIngredients, RecipesTags, Tag,
-    )
-from app.models.user import User
-from app.crud.base import CRUDBase
 from typing import Optional, Union
-from app.core.db import AsyncSession
-from sqlalchemy import select, func, and_, delete
-from sqlalchemy.orm import selectinload
+
 from fastapi.encoders import jsonable_encoder
-from app.schemas.recipe import RecipeUpdate, RecipeCreate
+from sqlalchemy import func, select
+from sqlalchemy.orm import selectinload
+
+from app.core.db import AsyncSession
+from app.crud.base import CRUDBase
 from app.crud.ingredient import ingredient_crud
 from app.crud.tag import tag_crud
+from app.models.model import (Favorite, Recipe, RecipesIngredients,
+                              RecipesTags, ShoppingList, Tag)
+from app.models.user import User
+from app.schemas.recipe import RecipeCreate, RecipeUpdate
 
 
 class CRUDRecipe(CRUDBase):

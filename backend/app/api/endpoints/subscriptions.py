@@ -1,14 +1,15 @@
-from app.models.user import User
 from typing import Optional, Union
-from app.core.db import get_async_session
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.user import current_user
-from app.crud.subscription import follow_crud
-from app.crud.recipe import recipe_crud
-from app.crud.utils import get_follows_with_param
-from app.api.validators import check_follow_exist
 
+from app.api.validators import check_follow_exist
+from app.core.db import get_async_session
+from app.core.user import current_user
+from app.crud.recipe import recipe_crud
+from app.crud.subscription import follow_crud
+from app.crud.utils import get_follows_with_param
+from app.models.user import User
 
 router = APIRouter()
 

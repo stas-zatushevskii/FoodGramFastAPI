@@ -1,19 +1,20 @@
 # api/recipes/{id}/shopping_cart/
 
-from app.core.db import get_async_session
+from io import BytesIO
+from uuid import uuid4
+
 from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.api.validators import check_shopping_list_exist
+from app.core.db import get_async_session
+from app.core.user import current_user
+from app.crud.shopping_list import shoppinglist_crud
+from app.crud.utils import get_ingredient
+from app.models.user import User
 from app.schemas.recipe import RecipeGet
 from app.schemas.shopping_list import Shopping_listBase
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.validators import check_shopping_list_exist
-from app.models.user import User
-from app.crud.shopping_list import shoppinglist_crud
-from app.core.user import current_user
-from app.crud.utils import get_ingredient
-from uuid import uuid4
-from io import BytesIO
-from fastapi.responses import StreamingResponse
-from app.core.user import current_user
 
 router = APIRouter()
 

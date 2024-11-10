@@ -1,7 +1,8 @@
+from sqlalchemy import and_, select
+
+from app.core.db import AsyncSession
 from app.crud.base import CRUDBase
 from app.models import Ingredient, RecipesIngredients
-from app.core.db import AsyncSession
-from sqlalchemy import select, and_
 
 
 class CRUDIngredient(CRUDBase):

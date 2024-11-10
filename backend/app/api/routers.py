@@ -1,7 +1,9 @@
 # app/api/routers.py
 from fastapi import APIRouter
 
-from app.api.endpoints import user_router, data_router, recipe_router, tag_router, ingredient_router, shopping_list_router, favorite_router, subscriptions_router
+from app.api.endpoints import (data_router, favorite_router, ingredient_router,
+                               recipe_router, shopping_list_router,
+                               subscriptions_router, tag_router, user_router)
 
 main_router = APIRouter()
 main_router.include_router(subscriptions_router, tags=['subscriptions'])

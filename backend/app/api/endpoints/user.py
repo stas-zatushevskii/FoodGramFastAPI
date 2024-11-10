@@ -1,16 +1,15 @@
-from fastapi import APIRouter, HTTPException
-
-from app.core.user import auth_backend, fastapi_users
-from app.schemas.user import UserCreate, UserRead, UserUpdate, UserInRecipe, UsreChangePassword
-from fastapi import APIRouter, Depends
-from app.models.user import User
-
-from app.core.db import get_async_session
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.crud.user import user_crud
-from app.core.user import current_user, get_user_db
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi_users.db import SQLAlchemyUserDatabase
 from fastapi_users.password import PasswordHelper
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.db import get_async_session
+from app.core.user import (auth_backend, current_user, fastapi_users,
+                           get_user_db)
+from app.crud.user import user_crud
+from app.models.user import User
+from app.schemas.user import (UserCreate, UserInRecipe, UserRead, UserUpdate,
+                              UsreChangePassword)
 
 router = APIRouter()
 password_helper = PasswordHelper()

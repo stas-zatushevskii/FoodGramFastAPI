@@ -1,13 +1,13 @@
-from app.core.db import get_async_session
 from fastapi import APIRouter, Depends
-from app.schemas.recipe import RecipeGet
-from app.schemas.favorite import FavoriteBase
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.validators import check_favorite_exist
-from app.core.user import current_user
-from app.models.user import User
-from app.crud.favorite import favorite_crud
 
+from app.api.validators import check_favorite_exist
+from app.core.db import get_async_session
+from app.core.user import current_user
+from app.crud.favorite import favorite_crud
+from app.models.user import User
+from app.schemas.favorite import FavoriteBase
+from app.schemas.recipe import RecipeGet
 
 router = APIRouter()
 

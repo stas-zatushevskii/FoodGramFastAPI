@@ -1,9 +1,9 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 # Импортируем главный роутер.
 from app.api.routers import main_router
 from app.core.config import settings
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title=settings.app_title,
               description="API_DESC",

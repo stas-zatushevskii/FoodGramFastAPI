@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Depends
-
-from app.schemas.tag import Tag
-from app.crud.tag import tag_crud
-
-from app.core.db import get_async_session
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.db import get_async_session
+from app.crud.tag import tag_crud
+from app.schemas.tag import Tag
 
 router = APIRouter()
 

@@ -1,11 +1,12 @@
-from app.models import User, followers
-from app.core.db import AsyncSession
-from sqlalchemy import select, and_, func
-from app.crud.base import CRUDBase
-from app.schemas.user import UserRecipes
-from app.crud.recipe import recipe_crud
 from typing import Optional
-from sqlalchemy import delete
+
+from sqlalchemy import and_, delete, func, select
+
+from app.core.db import AsyncSession
+from app.crud.base import CRUDBase
+from app.crud.recipe import recipe_crud
+from app.models import User, followers
+from app.schemas.user import UserRecipes
 
 
 # написать валидатор

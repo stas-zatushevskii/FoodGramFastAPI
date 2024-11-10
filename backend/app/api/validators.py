@@ -4,10 +4,10 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.favorite import favorite_crud
+from app.crud.recipe import recipe_crud
 from app.crud.shopping_list import shoppinglist_crud
 from app.crud.subscription import follow_crud
-from app.crud.recipe import recipe_crud
-from app.models import ShoppingList, Favorite, Recipe
+from app.models import Favorite, Recipe, ShoppingList
 from app.models.user import followers
 
 

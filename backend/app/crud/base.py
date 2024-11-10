@@ -1,11 +1,12 @@
-from app.core.db import AsyncSession
-from app.models import User
-from typing import Optional
-from sqlalchemy import select
 import base64
 import os
+from typing import Optional
 from uuid import uuid4
 
+from sqlalchemy import select
+
+from app.core.db import AsyncSession
+from app.models import User
 
 '''
 При работе с асинхронным движком (engine) SQLAlchemy запросы к БД можно писать только в стиле 2.0.

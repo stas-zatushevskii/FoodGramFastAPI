@@ -1,9 +1,9 @@
-from sqlalchemy import select, and_
-from app.crud.base import CRUDBase
-from app.models import ShoppingList, Recipe
-from app.core.db import AsyncSession
+from sqlalchemy import and_, select
 from sqlalchemy.orm import selectinload
-from sqlalchemy import and_
+
+from app.core.db import AsyncSession
+from app.crud.base import CRUDBase
+from app.models import Recipe, ShoppingList
 
 
 class CRUDShoppingList(CRUDBase):

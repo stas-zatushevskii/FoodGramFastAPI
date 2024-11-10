@@ -1,17 +1,15 @@
-from app.core.db import get_async_session
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends
-from app.schemas.recipe import RecipeList, RecipeDB, RecipeCreate, RecipeUpdate
-from app.crud.recipe import recipe_crud
-from app.core.user import current_user
-from fastapi import Query
-from app.crud.utils import update_recipes_with_details
-from app.api.validators import check_recipe_exist
-
-
-from app.models.user import User
 from typing import Optional, Union
 
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.api.validators import check_recipe_exist
+from app.core.db import get_async_session
+from app.core.user import current_user
+from app.crud.recipe import recipe_crud
+from app.crud.utils import update_recipes_with_details
+from app.models.user import User
+from app.schemas.recipe import RecipeCreate, RecipeDB, RecipeList, RecipeUpdate
 
 router = APIRouter()
 

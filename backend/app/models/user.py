@@ -1,13 +1,11 @@
 from typing import List
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
+                        Table, Text)
+from sqlalchemy.orm import Mapped, WriteOnlyMapped, mapped_column, relationship
 
-from app.core.db import Base # noqa
-
-from sqlalchemy import Column, String, Text, DateTime, Integer, ForeignKey, Table, Boolean
-from sqlalchemy.orm import relationship, WriteOnlyMapped
-
-from sqlalchemy.orm import relationship, Mapped, mapped_column
+from app.core.db import Base  # noqa
 
 followers = Table(
     'followers',
