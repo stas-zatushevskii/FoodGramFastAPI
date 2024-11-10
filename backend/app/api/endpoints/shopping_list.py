@@ -50,7 +50,10 @@ async def get_shopping_list(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_user)
 ):
-    shopping_list = await shoppinglist_crud.get_recipes(user.id, session)
+    shopping_list = await shoppinglist_crud.get_lists(
+        user.id, session
+    )
+
     return shopping_list
 
 
@@ -64,7 +67,7 @@ async def add_in_shoplist(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
 ):
-    await check_shopping_list_exist(user.id, recipe_id, session, exist=False)
+    result = await check_shopping_list_exist(user.id, recipe_id, session, exist=False)
     result = await shoppinglist_crud.create(user.id, recipe_id, session)
     return result
 
@@ -79,7 +82,7 @@ async def delete_shoplist(
     session: AsyncSession = Depends(get_async_session)
 ):
     shopping_list = await check_shopping_list_exist(
-        recipe_id, user.id, session, exist=True,
+        user.id, recipe_id, session, exist=True,
     )
     await shoppinglist_crud.delete(shopping_list, session)
     return {'message': 'Рецепт успешно удален из списка!'}

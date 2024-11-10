@@ -92,18 +92,22 @@ async def check_follow_exist(
 
 
 async def check_recipe_exist(
-        user_id: int,
         recipe_id: int,
+        author_id,
         session: AsyncSession,
-        exist: bool
 ) -> Recipe:
     recipe = await recipe_crud.get(
-        user_id, recipe_id, session
+        recipe_id, session
     )
     # если лист должен существовать для коректной проверки
     if recipe is None:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail='Рецепт не найден!'
+        )
+    if recipe.author.id != author_id:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Вы не являетесь автором рецепта!'
         )
     return recipe

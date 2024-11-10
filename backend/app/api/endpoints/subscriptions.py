@@ -69,7 +69,7 @@ async def follow(
     "/users/{author_id}/subscribe/"
 )
 async def unfollow(
-    author_id: int,
+    recipe_id: int,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_user)
 ):
