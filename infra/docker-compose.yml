@@ -25,10 +25,7 @@ services:
     networks:
       - dev
   backend:
-    container_name: backend
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
+    image: staszatshevskii/backend-fastapi:latest
     restart: always
     volumes:
       - static_value:/code/static/

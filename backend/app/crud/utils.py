@@ -11,6 +11,7 @@ from app.models import RecipesIngredients, User
 from app.schemas.ingredient import Ingredient
 from app.schemas.recipe import RecipeDB
 from app.schemas.user import UserRecipes
+from passlib.context import CryptContext
 
 
 async def update_recipes_with_details(recipes, user_id: int, session: AsyncSession):
