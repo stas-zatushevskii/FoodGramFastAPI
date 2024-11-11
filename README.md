@@ -8,6 +8,9 @@ Foodgram - Сервис для публикации рецептов, цель �
 
 Install my-project with npm
 
+## Проект доступен по ссылке: 
+http://185.204.0.17
+
 ```bash
   git clone https://github.com/stas-zatushevskii/FoodGramFastAPI
   cd FoodGramFastAPI
